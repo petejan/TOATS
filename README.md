@@ -2,7 +2,7 @@
 
 create a -cmd.txt file with the input data
 
-`python TOATS.py < SOTS-pCO2-cmd.txt
+`python TOATS.py < SOTS-pCO2-cmd.txt`
 
 outputs
 
