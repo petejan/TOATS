@@ -1,0 +1,144 @@
+--- TOATS.py.orig	2023-07-06 06:53:17.000000000 +1000
++++ TOATS.py	2023-07-06 06:43:18.000000000 +1000
+@@ -24,21 +24,24 @@
+ from collections import OrderedDict
+ import math
+ import re
+-import requests
++#import requests
+ import warnings
+ 
+ # 3rd party libraries
+ import matplotlib.pyplot as plt
++from matplotlib.backends.backend_pdf import PdfPages
+ import numpy as np
+ import pandas as pd
+ import statsmodels.api as sm
+ from tabulate import tabulate
+ 
++import sys
++
+ warnings.filterwarnings('ignore')
+ 
+ # set size of figures
+-get_ipython().run_line_magic('matplotlib', 'notebook')
+-plt.rcParams['figure.figsize'] = (8, 3)
++#get_ipython().run_line_magic('matplotlib', 'notebook')
++#plt.rcParams['figure.figsize'] = (8, 3)
+ 
+ 
+ # ### ASSUMPTIONS
+@@ -91,6 +94,8 @@
+ site_name = input("Input the site name: ")
+ ts_df = load_file_to_pandas(file_name)
+ 
++pp = PdfPages(site_name + '-' + file_name + '-TOATS.pdf')
++
+ print('\nBeginning of the dataframe with the imported data:')
+ datetime_col = ts_df.columns[0]
+ variable_names = list(ts_df.columns[1:])
+@@ -259,7 +264,9 @@
+     plt.xlabel('Month')
+     plt.xticks(np.arange(1, 13, step=1))
+     plt.ylabel(f"seawater {k} ({var_unit_dict[k]})")
+-    plt.show()
++    pp.savefig()
++    #plt.show()
++    plt.close()
+ 
+     plt.figure()
+     plt.hist(ts_df_dict[k]['month'], bins=np.arange(14)-0.5, edgecolor='black', rwidth=0.8)
+@@ -268,7 +275,9 @@
+     plt.ylabel("# of measurements") 
+     plt.xticks([1,2,3,4,5,6,7,8,9,10,11,12])
+     plt.xlim([0.5,12.5])
+-    plt.show()
++    pp.savefig()
++    #plt.show()
++    plt.close()
+     
+ print('\nBefore continuing, the user should confirm that monthly measurement distributions are sufficient to constrain climatological monthly means and the annual climatological mean.','\n')
+ 
+@@ -518,6 +527,11 @@
+ 
+ # In[ ]:
+ 
++print()
++
++# re-direct output to a text file
++original = sys.stdout
++sys.stdout = open(site_name + '-' + file_name + '-TOATS.txt', 'w')
+ 
+ # summary of OLS Regression Results
+ print('---Summary of OLS Regression Results---','\n')
+@@ -575,7 +589,9 @@
+ plt.title("{} time series".format(site_name)) 
+ plt.ylabel("seawater {} ({})".format(param_to_summerize, units)) 
+ plt.legend()
+-plt.show()
++pp.savefig()
++#plt.show()
++plt.close()
+ 
+ # assumptions
+ print('---Assumptions and considerations---','\n')
+@@ -593,7 +609,9 @@
+ ax.set_xlabel('Month')
+ ax.set_xticks(np.arange(1, 13, step=1))
+ ax.set_ylabel("seawater {} ({})".format(param_to_summerize, units)) 
+-plt.show()
++pp.savefig()
++#plt.show()
++plt.close()
+ 
+ plt.figure()
+ plt.hist(ts_df['month'], bins=np.arange(14)-0.5, edgecolor='black', rwidth=0.8)
+@@ -602,9 +620,11 @@
+ plt.ylabel("# of measurements") 
+ plt.xticks([1,2,3,4,5,6,7,8,9,10,11,12])
+ plt.xlim([0.5,12.5])
+-plt.show()
++pp.savefig()
++#plt.show()
++plt.close()
+ 
+-display(ts_monthly_stats)
++#display(ts_monthly_stats)
+ 
+ # plot annual means
+ fig, ax = plt.subplots()
+@@ -614,7 +634,9 @@
+ ax.set_title("{} annual means and std".format(site_name)) 
+ ax.set_xlabel('Year')
+ ax.set_ylabel("seawater {} ({})".format(param_to_summerize, units)) 
+-plt.show()
++pp.savefig()
++#plt.show()
++plt.close()
+ 
+ maxyear = max(ts_df['year'])
+ minyear = min(ts_df['year'])
+@@ -626,9 +648,13 @@
+ plt.title("{} annual measurement distribution".format(site_name)) 
+ plt.xlabel("year") 
+ plt.ylabel("# of measurements") 
+-plt.show()
++pp.savefig()
++#plt.show()
++plt.close()
+ 
+-display(ts_annual_stats)
++pp.close()
++
++#display(ts_annual_stats)
+ 
+ # export time series of de-seasoned monthly means 
+ month_year = np.reshape(ts_mean[param_to_summerize]['datetime_mean'].values,
+@@ -642,6 +668,5 @@
+ 
+ # In[ ]:
+ 
+-
+-
++sys.stdout = original
+ 

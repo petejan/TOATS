@@ -1,3 +1,19 @@
+# SOTS modifications, usage
+
+create a -cmd.txt file with the input data
+
+`python TOATS.py < SOTS-pCO2-cmd.txt
+
+outputs
+
+`SOFS-SOTS-pCO2_input.txt-TOATS.pdf`
+`SOFS-SOTS-pCO2_input.txt-TOATS.txt`
+`SOFS_sst_deseasoned_monthly_means.csv`
+
+convert original ipynb to python
+
+`jupyter nbconvert --to python TOATS.ipynb`
+
 # TOATS
 Best practices for assessing Trends of Ocean Acidification Time Series (TOATS)
 
